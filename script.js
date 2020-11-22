@@ -1,17 +1,26 @@
-let espace=String.fromCharCode(160), //&nsp
-  fleche=String.fromCharCode(8594),
-  retLigne=String.fromCharCode(10),
-  listWarning=['large number, SCI mode set','operation is undefined','calculation not possible'];
-let ligne=[]; 
-let nbrLignes=20; // nombre de lignes
-let longLigne=50; // nombre d'element dans une ligne
-let typeElement=4; // nombre d'elements differents
-  
+let espace=String.fromCharCode(160); //&nsp
+let fleche=String.fromCharCode(8594);
+let retLigne=String.fromCharCode(10);
+let nord=String.fromCharCode(5123);
+let est=String.fromCharCode(5125);
+let sud=String.fromCharCode(5121);
+let ouest=String.fromCharCode(5130);
+let grid=[]; 
+let nbrLignes=30; // nombre de lignes de grid
+let longLigne=60; // nombre d'element dans une ligne
+let nbrElements=4; // nombre de tyoe d'elements differents 0 1 2 3
+let xAgent=0;
+let yAgent=0;
+let dirAgent=0;// nord
+let imgAgent=[nord, est, sud, ouest]; // caracteres a utiliser pour agent
+let point=0; // element sur lequel se situe l'agent
+let pileAgent=[]; // valeurs de grid deplacees par agent
 
+
+  
 aInput = document.getElementById('ainput'); 
 aInfo = document.getElementById('ainfo'); 
 agrid=document.getElementById('aresults');
-
 
 document.querySelectorAll('.bblanc').forEach(item => {
   item.addEventListener('click', event => {    
@@ -30,20 +39,89 @@ document.querySelectorAll('.bgris').forEach(item => {
 });
 
 
+document.querySelectorAll('.bbleu').forEach(item => {
+  item.addEventListener('click', event => {    
+    const {target} = event;
+	titreBouton=target.textContent;
+	boutonBleu(titreBouton);
+  })
+});
+
+/*
 function geneLigne(){
   // genere une ligne de x valeurs aleatoires
-for (let i = 0; i < longLigne; i++) {
-  val=String(Math.floor(Math.random() * typeElement));// string aleatoire de 0 à 4
-  ligne.push(val)}
+  let ligne=[];
+  for (let i = 0; i < longLigne; i++) {
+    val=String(Math.floor(Math.random() * nbrElements));// string aleatoire de 0 à nbrElements
+    ligne[i]=val;
+  }
+  return ligne;
+}
+*/
+
+function geneGrid(){
+  // genere grid 
+  for (let j=0;j< nbrLignes; j++){
+    let ligne=[];
+    for (let i = 0; i < longLigne; i++) {
+      val=String(Math.floor(Math.random() * nbrElements));// string aleatoire de 0 à nbrElements
+      ligne[i]=val;
+    }
+    grid[j]=ligne;
+  }
 }
 
-function affichLigne(){
-  // affiche la ligne dans agrid
-  texte='';
-  for (let i=0; i<longLigne;i++){
-    texte=texte+ligne[i]
+function affichGrid(){ 
+  texteGrid='';
+  for (let j=0; j< nbrLignes; j++){
+    //texteLigne='';
+    //ligne=grid[j]; // la ligne j
+    texteLigne=grid[j].join(''); // transforme grid[j] en une string
+    //for (let i=0; i<longLigne;i++){
+      //texteLigne=texteLigne+ligne[i];
+    //}
+    texteGrid=texteGrid+texteLigne+'\n';
   }
-  agrid.textContent=texte;
+  agrid.textContent=texteGrid;
+  aInfo.textContent='x='+xAgent+' y='+yAgent+' dir='+dirAgent+' pileAgent='+pileAgent[0];
+}
+
+function defAgent(){
+  // xAgent de 0 à longLigne-1 colonnes
+  // yAgent de 0 à nbrLignes-1 lignes
+  xAgent=Math.floor(Math.random() * longLigne); // x
+  yAgent=Math.floor(Math.random() * nbrLignes); // y
+  dirAgent=Math.floor(Math.random() * 4); // 0 nord 1 est 2 sud 3 ouest 
+  // place agent ligne yAgent position xAgent
+  pileAgent.unshift(grid[yAgent][xAgent]); // sauvegarde point ou se situe l'agent
+  grid[yAgent][xAgent]=imgAgent[dirAgent]; // mise en place agent
+}
+
+function rotAgent(){
+  // rotation de 90 degres dans sens horaire
+  dirAgent=(dirAgent+1)%4;
+  grid[yAgent][xAgent]=imgAgent[dirAgent];
+  // detection bords
+}
+
+function goNord(){
+  if (yAgent!==0){ // limite nord
+    grid[yAgent][xAgent]=pileAgent.shift(); // remise en place de la valeur sous agent
+    yAgent=yAgent-1; // vers le nord
+    pileAgent.unshift(grid[yAgent][xAgent]); // sauvegarde point ou se situe l'agent
+    grid[yAgent][xAgent]=imgAgent[dirAgent] // affiche agent
+  }
+  else {return}
+}
+
+function goSud(){
+  if (yAgent!==nbrLignes-1){ // limite sud
+    grid[yAgent][xAgent]=pileAgent.shift(); // remise en place de la valeur sous agent
+    yAgent=yAgent+1; // vers le nord
+    pileAgent.unshift(grid[yAgent][xAgent]); // sauvegarde point ou se situe l'agent
+    grid[yAgent][xAgent]=imgAgent[dirAgent] // affiche agent
+  }
+  else {return}
 }
 
 function affichageInfo(){
@@ -67,6 +145,19 @@ function affichageResults(x){
   }
 }
 
+
+function stop(){
+  clearInterval(intervalID);
+}
+
+function myCallback()
+{
+  // geneGrid();
+  defAgent();
+  affichGrid();
+}
+
+
 function affichageInput(z){
   // affichage de input, calcul de position, dern et avDern
   // position = 1 partie entiere, 2 partie decimale, 3 partie exposant, 4 exposant complet  
@@ -81,54 +172,28 @@ function affichageInput(z){
 }
 
 function boutonBlanc(x) {
-  // gestion des touches blanches , entree d'un nombre
-  y=aInput.textContent; // y comme raccourci
-  z=''; // nouvelle valeur pour entree 
-  affichageInfo(); // mise a jour des messages si touche appuyee
-  if (entreeEnCours===true) {
-	  if (x==='AC') {z=''}
-	  else if (x==='C') {z=y.substr(0,y.length-1)}
-	  else if (y.length>11) {return}// nombre de caracteres max
-    else if (position===4) {return}// deja 2 digits apres E
-    else if (x==='.') {if (position===1){z=y+x} else {return}}
-    else if (x==='-'){if ((position===3)&&(dern==='E')){z=y+x} else {return}}
-    else if (x==='E'){if (position<3){z=y+x} else {return}}
-	  else {z=y+x}
-	affichageInput(z);// affichage de input
-  } 
-  else { // nouvelle entree  
-	  if (x==='C'){return}
-	  else if (x==='AC') {return }
-	  else if (x==='.'){z='0.'}
-	  else if (x==='E'){z='1.0E'}
-	  else {z=x}
-  entreeEnCours=true;
-	affichageInput(z);
-  } // fin de nouvelle entree
- } // fin de boutonBlanc
+  // gestion des touches blanches
+  if (x==='ROT'){rotAgent();affichGrid()};// fEnter affiche deja results
+  if (x===nord){goNord(); affichGrid()}
+  if (x===sud){goSud(); affichGrid()}
+} // fin de boutonBlanc
  
 function boutonGris(x){
   // gestion des boutons gris, gestion pile et autres
-  let flagR=true; // affichageResults
-  let r=0;
-  if (x==='ENTER'){fEnter();flagR=false};// fEnter affiche deja results
-  if (x==='PI'){affichageInput('');fUp();pile0=Math.PI}
-  if (x==='DROP'){fDown()}
-  if (x==='DUP'){fUp();pile0=pile1}
-  if (x==='STO'){fEnter();mem=pile0}
-  if (x==='RCL'){affichageInput('');fUp();pile0=mem}
-  if (x==='SWAP'){r=pile0;pile0=pile1;pile1=r}
-  if (x==='CSTK'){pile0=0;pile1=0;pile2=0;mem=0} 
-  if (x==='DEG'){degrad='DEG'} 
-  if (x==='RAD'){degrad='RAD'} 
-  if (x==='FIX'){fixsci='FIX';flagR=false} 
-  if (x==='SCI'){fixsci='SCI';flagR=false} 
-  if (x==='D+'){if (decimales<8){decimales +=1};flagR=false} 
-  if (x==='D-'){if (decimales>0){decimales -=1};flagR=false} 
-  if (x==='CRST'){listOpe=[]} 
-  affichagePile(); // attention affichage doit etre avant fResults cause fixsci
-  if (flagR===true){affichageResults(x);}
-}// fin de 
+  
+  if (x==='STOP'){stop()};// fEnter affiche deja results
+  if (x==='GO'){intervalID = window.setInterval(myCallback, 1000);}
+}// fin de boutonGris
 
-geneLigne();
-affichLigne();
+function boutonBleu(x) {
+  // gestion des touches blanches
+  if (x==='ROT'){stop()};// fEnter affiche deja results
+} // fin de boutonBlanc
+
+
+
+
+//let intervalID = window.setInterval(myCallback, 1000);
+geneGrid();
+defAgent();
+affichGrid();
