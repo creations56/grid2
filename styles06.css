@@ -1,0 +1,142 @@
+body{
+	background-color:#aaaaaa;
+	text-align: center;
+	font-size: 18px;
+	touch-action: manipulation;/*supprime double touche pour zoomer*/
+}
+
+h1{
+	font-size: 20px; 
+	color: #505050;
+	padding: 0px;
+	margin: 0px;
+}
+
+a{
+  color: #eeeeee;
+}
+
+.cadre {
+ width:600px;
+ text-align: center;
+ background-color: #aaaaaa;
+ justify-content: center;/*centrage dans la boite*/
+ display: grid;
+ margin: 0 auto; /* centrage de la boite */ 
+ grid-template-columns: repeat(10,50px);
+ grid-gap: 5px;
+ grid-auto-rows: minmax(50px, auto);/* hauteur des lignes*/
+ border: 2px solid #ffffff;
+ border-radius: 10px; 
+}
+
+/*zone des affichages*/
+.a{
+  /* caracteristiques communes aux affichages*/
+  background-color: rgb(255,255,240);
+  padding-right: 10px;
+  text-align: right;
+  
+  border: 1px solid rgb(0,0,0);
+  border-radius: 5px;
+}
+.a1{
+  /* caracteristiques affichage statique*/
+  background-color: transparent;
+  padding-right: 10px;
+  text-align: right;
+}
+
+#aresults {
+  grid-column: 1/11;
+  grid-row: 2/10;
+  /*width: 550px;
+  height: 500px;*/
+  line-height: 12px;
+  white-space: pre-line; /* /n retour a la ligne */
+  text-align: center; /*remplace valeur de la class*/
+  padding: 10;
+  margin-top:5px;
+  background-color: rgb(255,255,255);/*remplace valeur de la class*/
+  font-size: 12px;
+  font-family: "Courier New", Courier, monospace; /* pour alignement caracteres*/  
+  overflow: scroll;
+}
+
+#ainput {
+  grid-column: 6/11;
+  grid-row: 1;
+  background-color: rgb(255,255,255);/*remplace valeur de la class*/
+  vertical-align:middle;
+  line-height: 50px; /* pour que vertical-align fonctionne */
+}
+#ainfo {
+  grid-column: 6/11;
+  grid-row: 10/13;
+  width: 260px;
+  height:155px;
+  font-family: "Courier New", Courier, monospace ; /* pour alignement caracteres*/ 
+  text-align: center; /*remplace valeur de la class*/
+  background-color: rgb(255,255,255);/*remplace valeur de la class*/
+  font-size: 12px; /*remplace valeur de la class*/
+  //vertical-align:middle;
+  //line-height: 50px; /* pour que vertical-align fonctionne */
+  white-space: pre-line; /* /n retour a la ligne */
+  overflow: scroll;
+}
+
+#ainter {
+  grid-column: 1/6;
+  grid-row: 1;
+  text-align: center; /*remplace valeur de la class*/
+  background-color: rgb(255,255,255);/*remplace valeur de la class*/
+  font-size: 14px;/*remplace valeur de la class*/
+  vertical-align:middle;
+  line-height: 50px; /* pour que vertical-align fonctionne */
+}
+
+
+/*zone des bouttons*/
+button{
+  /* concerne tous les boutons*/
+  font-size: 12px;  /* min 16 pour eviter zoom auto sur IPhone*/
+  font-weight: bold;
+  justify-content: center;
+  height: 50px;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  padding: 0px;
+}
+.bgris{
+  /*concerne les boutons gris*/
+  background: linear-gradient(to bottom,#999999, #666666);
+  color: white;
+}
+.bbleu{
+  /*concerne les boutons bleus*/
+  background: linear-gradient(to bottom,#e6f0ff, #4d94ff);
+  color: black;
+}
+.bblanc{
+  /*concerne les boutons blancs*/
+  background: linear-gradient(to bottom,#ffffff, #999999);
+  color: black;
+}
+
+
+
+
+
+#bnord{grid-column: 2;grid-row: 10;}
+#bouest{grid-column:1;grid-row: 11;}
+
+#brot{grid-column:2;grid-row: 11;}
+#best{grid-column:3;grid-row: 11;}
+#bsud{grid-column:2;grid-row: 12;}
+
+#bana{grid-column:4;grid-row: 10;}
+#binit{grid-column:4;grid-row: 11;}
+#benter{grid-column:3/5;grid-row: 12;}
+#bmove{grid-column:5;grid-row: 10;}
+#bgo{grid-column:5;grid-row: 11;}
+#bstop{grid-column:5;grid-row: 12;}
